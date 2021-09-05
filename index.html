@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" name="viewport" content="width=device-width,initial-scale=1">
+    <title>(っ °Д °;)っ</title>
+    <link rel="stylesheet" href="style-root.css">
+    <link rel="stylesheet" href="style.css">
+
+    <script src="//cdn.jsdelivr.net/npm/vconsole@3.3.4/dist/vconsole.min.js"></script>
+    <script>
+        var vConsole = new VConsole();
+    </script>
+
+    <script src="oggmented.js"></script>
+    <script src="createImageBitmap.js"></script>
+    <script defer src="main.js"></script>
+</head>
+
+<body>
+    <div id="main" style="display: none">
+        <h1 class="title"></h1>
+        <p class="info"></p>
+        <p class="profile">
+            将<a id="qwq">谱面等资源文件(点击查看说明)</a>打包成zip然后上传；<br>
+            读取完成后调节相关参数，最后点击“播放”按钮。<br>
+            播放时双击：左上角暂停；右上角重新开始；右下角全屏。
+        </p>
+        <div id="cover-dark" class="fade"></div>
+        <div id="cover-view" class="fade">
+            <div>
+                <p class="view-title">资源文件说明</p>
+                <hr>
+                <strong class="view-content">
+                    谱面文件(必需)：json<a name="b1" href="#a1"><sup>[1]</sup></a>/pec<a name="b2"
+                        href="#a2"><sup>[2]</sup></a><br>
+                    背景音乐(必需)：mp3/wav/ogg<br>
+                    背景图片(可选)：png/jpeg/jpg<br>
+                    配置文件(可选)：info.csv<a name="b3" href="#a3"><sup>[3]</sup></a>/line.csv<a name="b4"
+                        href="#a4"><sup>[4]</sup></a><br>
+                </strong>
+                <hr>
+                <table class="view-table">
+                    <tr>
+                        <td><a name="a1" href="#b1">[1]</a></td>
+                        <td>
+                            json即官方谱面，模拟器几乎完全支持<br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a name="a2" href="#b2">[2]</a></td>
+                        <td>
+                            pec即PhiEditer谱面，由于模拟器先将其转换为官谱格式再进行播放，将不可避免地存在以下问题：<br>
+                            &bull;&ensp;不显示负数Note(可勾选显示定位点以半透明显示);<br>
+                            &bull;&ensp;FakeNote可能存在显示错误;<br>
+                            &bull;&ensp;Hold打击时无法变速;<br>
+                            &bull;&ensp;不支持Alpha扩展(负数);<br>
+                            其他PhiEditer独有特性也有可能无法正常显示<br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a name="a3" href="#b3">[3]</a></td>
+                        <td>
+                            info.csv：自动填写谱面信息 (参考:<a href="//www.rfc-editor.org/rfc/rfc4180"
+                                target="_blank">csv标准文档</a>)<br>
+                            格式：Chart,Music,Image,AspectRatio,ScaleRatio,GlobalAlpha,Name,Level,Illustrator,Designer<br>
+                            <table class="real-table">
+                                <tr>
+                                    <th>属性</th>
+                                    <th>说明</th>
+                                </tr>
+                                <tr>
+                                    <td>Chart</td>
+                                    <td>谱面(zip文件内完整路径)</td>
+                                </tr>
+                                <tr>
+                                    <td>Music</td>
+                                    <td>音乐(zip文件内完整路径)</td>
+                                </tr>
+                                <tr>
+                                    <td>Image</td>
+                                    <td>图片(zip文件内完整路径)</td>
+                                </tr>
+                                <tr>
+                                    <td>AspectRatio</td>
+                                    <td>宽高比(画面宽度与高度的比值，默认1.777778，即16:9)</td>
+                                </tr>
+                                <tr>
+                                    <td>ScaleRatio</td>
+                                    <td>按键缩放(数值越大Note越小，默认8e3)</td>
+                                </tr>
+                                <tr>
+                                    <td>GlobalAlpha</td>
+                                    <td>背景变暗(背景不透明度，默认0.6)</td>
+                                </tr>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>名称(显示在画面左下角)</td>
+                                </tr>
+                                <tr>
+                                    <td>Level</td>
+                                    <td>等级(显示在画面右下角)</td>
+                                </tr>
+                                <tr>
+                                    <td>Illustrator</td>
+                                    <td>曲绘(显示于过渡动画)</td>
+                                </tr>
+                                <tr>
+                                    <td>Designer</td>
+                                    <td>谱师(显示于过渡动画)</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a name="a4" href="#b4">[4]</a></td>
+                        <td>
+                            line.csv：替换指定判定线贴图 (参考:<a href="//www.rfc-editor.org/rfc/rfc4180"
+                                target="_blank">csv标准文档</a>)<br>
+                            格式：Chart,LineId,Image,Vert,Horz,IsDark<br>
+                            <table class="real-table">
+                                <tr>
+                                    <th>属性</th>
+                                    <th>说明</th>
+                                </tr>
+                                <tr>
+                                    <td>Chart</td>
+                                    <td>谱面(zip文件内完整路径)</td>
+                                </tr>
+                                <tr>
+                                    <td>LineId</td>
+                                    <td>判定线id(即判定线数组下标，从0开始)</td>
+                                </tr>
+                                <tr>
+                                    <td>Image</td>
+                                    <td>图片(zip文件内完整路径)</td>
+                                </tr>
+                                <tr>
+                                    <td>Vert</td>
+                                    <td>垂直宽度(负数取绝对值作为画面高度的比值，例如-0.5代表画面高度的一半；正数取绝对值为125倍判定线宽度的比值，例如0.016代表2倍判定线宽度；0代表隐藏判定线，不推荐使用；默认值0.008)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Horz</td>
+                                    <td>水平拉伸(图片长宽比与原图长宽比的比值，例如2代表将原图水平拉伸至原来的2倍；默认值1.042)</td>
+                                </tr>
+                                <tr>
+                                    <td>IsDark</td>
+                                    <td>跟随背景变暗(1:是；0:否，即图片亮度不受背景变暗的影响；默认值0)</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div id="uploads" class="upload">
+            <input type="button" id="demo" value="Demo">
+            <input type="file" accept="application/x-zip-compressed" id="upload">
+            <label for="upload">选择zip</label>
+            <input type="text" style="width:0;flex-grow:1;flex-shrink:1;pointer-events:none" id="filename">
+        </div>
+        <input type="button" value="重置" onclick="location.reload(true)">
+        <div id="select">
+            <div>谱面：<select id="select-chart" style="width:6em"></select></div>
+            <div>音乐：<select id="select-bgm" style="width:6em"></select></div>
+            <div>图片：<select id="select-bg" style="width:6em"></select></div><br>
+            <div>宽高比：<select id="select-aspect-ratio" style="width:4em">
+                    <option value="1.25">5:4</option>
+                    <option value="1.333333">4:3</option>
+                    <option value="1.428571">10:7</option>
+                    <option value="1.461538">19:13</option>
+                    <option value="1.6">8:5</option>
+                    <option value="1.666667">5:3</option>
+                    <option value="1.692308">22:13</option>
+                    <option value="1.777778" selected>16:9</option>
+                </select>
+            </div>
+            <div>按键缩放：<select id="select-scale-ratio" style="width:4em">
+                    <option value="1e4">极小</option>
+                    <option value="9e3">较小</option>
+                    <option value="8e3" selected>默认</option>
+                    <option value="7e3">较大</option>
+                    <option value="6e3">极大</option>
+                </select>
+            </div>
+            <div>背景变暗：<select id="select-global-alpha" style="width:4em">
+                    <option value="1">黑暗</option>
+                    <option value="0.8">昏暗</option>
+                    <option value="0.6" selected>默认</option>
+                    <option value="0.4">较亮</option>
+                    <option value="0.2">明亮</option>
+                </select>
+            </div><br>
+            <div>歌名：<input id="input-name" class="input" style="width:7em" placeholder="Untitled"></div>
+            <div>等级：<input id="input-level" class="input" style="width:7em" placeholder="SP  Lv.?"></div><br>
+            <div>曲绘：<input id="input-illustrator" class="input" style="width:7em" placeholder="nameless"></div>
+            <div>谱师：<input id="input-designer" class="input" style="width:7em" placeholder="nameless"></div><br>
+            <div><input type="checkbox" id="hitSong" checked><label for="hitSong">开启打击音效</label></div>
+            <div><input type="checkbox" id="highLight" checked><label for="highLight">多押高亮</label></div>
+            <div><input type="checkbox" id="lineColor" checked><label for="lineColor">FC/AP指示器</label></div><br>
+            <div><input type="checkbox" id="showPoint"><label for="showPoint">显示定位点</label></div>
+            <div class="disabled-when-playing"><input type="checkbox" id="autoplay" checked><label
+                    for="autoplay">AutoPlay</label></div>
+            <div class="disabled-when-playing"><input type="checkbox" id="showTransition" checked><label
+                    for="showTransition">过渡动画</label></div>
+            <div class="disabled-when-playing"><input type="checkbox" id="videoRecorder"><label
+                    for="videoRecorder">视频录制</label></div><br>
+            <div class="disabled-when-playing">谱面延时(ms)：<input id="input-offset" type="number" step="5" class="input"
+                    style="width:4em" placeholder="0"></div>
+            <div><input id="btn-play" type="button" value="播放"> <input id="btn-pause" type="button" value="暂停"></div>
+        </div>
+        <div><strong id="output"></strong></div>
+        <div id="stage">
+            <canvas id="canvas-bg"></canvas>
+            <canvas id="canvas"></canvas>
+            <div id="stage-mask" class="fade">
+                <div>Tips: Do not distribute the URL in case the proliferation of low-tech videos!</div>
+                <div>为避免低技术视频泛滥，请不要直接传播模拟器网址！</div>
+            </div>
+        </div>
+    </div>
+    <noscript><strong style="color:red">此浏览器不支持JavaScript，该脚本无法运行。</strong></noscript>
+    <script src="zip.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
